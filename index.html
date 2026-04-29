@@ -1,0 +1,380 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VoiceBot GM — Reporte Ejecutivo Q1 2026</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --green:#00e676; --teal:#00bcd4; --purple:#7c4dff;
+      --orange:#ff6d00; --dark:#0d1117; --card:#161b22;
+      --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--dark);color:var(--text);padding:32px 24px;}
+    header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:40px;flex-wrap:wrap;gap:16px;}
+    .brand h1{font-size:2rem;font-weight:800;letter-spacing:-0.5px;}
+    .brand h1 span{color:var(--green);}
+    .brand p{color:var(--muted);font-size:0.9rem;margin-top:4px;}
+    .badge{background:linear-gradient(135deg,var(--purple),var(--teal));padding:8px 18px;border-radius:20px;font-size:0.8rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;align-self:center;}
+    .section-title{font-size:0.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;margin-top:40px;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:16px;}
+    .kpi-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 18px;position:relative;overflow:hidden;}
+    .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+    .kpi-card.green::before{background:var(--green);}
+    .kpi-card.teal::before{background:var(--teal);}
+    .kpi-card.purple::before{background:var(--purple);}
+    .kpi-card.orange::before{background:var(--orange);}
+    .kpi-card.gold::before{background:#ffd700;}
+    .kpi-card.red::before{background:#f44336;}
+    .kpi-label{font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+    .kpi-value{font-size:1.9rem;font-weight:800;line-height:1;}
+    .kpi-value.green{color:var(--green);} .kpi-value.teal{color:var(--teal);}
+    .kpi-value.purple{color:var(--purple);} .kpi-value.orange{color:var(--orange);}
+    .kpi-value.gold{color:#ffd700;} .kpi-value.red{color:#f44336;}
+    .kpi-sub{font-size:0.72rem;color:var(--muted);margin-top:6px;}
+    .kpi-tag{display:inline-block;margin-top:8px;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(0,230,118,0.15);color:var(--green);}
+    .kpi-tag.warn{background:rgba(255,109,0,0.15);color:var(--orange);}
+    .kpi-tag.red{background:rgba(244,67,54,0.15);color:#f44336;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+    .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+    @media(max-width:900px){.two-col,.three-col{grid-template-columns:1fr;}}
+    .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+    .chart-card h3{font-size:0.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .chart-wrap{position:relative;height:220px;}
+    .funnel-wrap{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;}
+    .funnel-wrap h3{font-size:0.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;}
+    .funnel-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+    .funnel-label{width:110px;font-size:0.76rem;color:var(--muted);text-align:right;flex-shrink:0;}
+    .funnel-bar-wrap{flex:1;background:#21262d;border-radius:6px;height:26px;overflow:hidden;}
+    .funnel-bar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:10px;font-size:0.76rem;font-weight:700;}
+    .funnel-pct{width:48px;font-size:0.76rem;color:var(--muted);text-align:right;flex-shrink:0;}
+    .int-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    @media(max-width:700px){.int-grid{grid-template-columns:1fr;}}
+    .int-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center;}
+    .int-icon{font-size:2rem;margin-bottom:8px;}
+    .int-title{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+    .int-row{display:flex;justify-content:space-between;font-size:0.82rem;margin-bottom:6px;}
+    .int-row span:first-child{color:var(--muted);}
+    .aut{color:var(--green);font-weight:700;} .man{color:var(--teal);font-weight:700;}
+    .table-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;overflow-x:auto;}
+    .table-card h3{font-size:0.82rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+    table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+    th{color:var(--muted);font-weight:600;text-align:left;padding:8px 12px;border-bottom:1px solid var(--border);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;}
+    td{padding:10px 12px;border-bottom:1px solid #21262d;}
+    tr:last-child td{border-bottom:none;}
+    .pill{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.7rem;font-weight:700;}
+    .pill.high{background:rgba(0,230,118,0.15);color:var(--green);}
+    .pill.mid{background:rgba(0,188,212,0.15);color:var(--teal);}
+    .pill.low{background:rgba(255,109,0,0.15);color:var(--orange);}
+    .pill.red{background:rgba(244,67,54,0.15);color:#f44336;}
+    .highlight-box{background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,188,212,0.08));border:1px solid rgba(0,230,118,0.25);border-radius:12px;padding:24px 28px;margin-top:40px;}
+    .highlight-box h3{color:var(--green);font-size:1rem;margin-bottom:16px;}
+    .highlight-box ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+    .highlight-box li{font-size:0.88rem;color:var(--text);padding-left:20px;position:relative;}
+    .highlight-box li::before{content:'✦';position:absolute;left:0;color:var(--green);font-size:0.7rem;top:2px;}
+    .warn-box{background:linear-gradient(135deg,rgba(255,109,0,0.08),rgba(244,67,54,0.06));border:1px solid rgba(255,109,0,0.25);border-radius:12px;padding:24px 28px;margin-top:20px;}
+    .warn-box h3{color:var(--orange);font-size:1rem;margin-bottom:16px;}
+    .warn-box ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+    .warn-box li{font-size:0.88rem;color:var(--text);padding-left:20px;position:relative;}
+    .warn-box li::before{content:'▲';position:absolute;left:0;color:var(--orange);font-size:0.65rem;top:3px;}
+    .divider{border:none;border-top:1px solid var(--border);margin:40px 0;}
+    .trend-up{color:var(--green);font-size:0.75rem;font-weight:700;}
+    .trend-down{color:#f44336;font-size:0.75rem;font-weight:700;}
+    footer{margin-top:48px;text-align:center;font-size:0.75rem;color:var(--muted);border-top:1px solid var(--border);padding-top:20px;}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="brand">
+    <h1>Voice<span>Bot</span> GM</h1>
+    <p>Reporte Ejecutivo Completo · Enero – Marzo 2026 · Utel Universidad</p>
+  </div>
+  <div class="badge">Q1-2026</div>
+</header>
+
+<!-- ══ SECCIÓN 1: KPIs PRINCIPALES ══ -->
+<p class="section-title">Indicadores Clave de Desempeño — Q1 2026</p>
+<div class="kpi-grid">
+  <div class="kpi-card green">
+    <div class="kpi-label">Leads Procesados</div>
+    <div class="kpi-value green">23,909</div>
+    <div class="kpi-sub">Total del período Q1</div>
+    <span class="kpi-tag">Base 100%</span>
+  </div>
+  <div class="kpi-card teal">
+    <div class="kpi-label">Automatización Bot</div>
+    <div class="kpi-value teal">93.6%</div>
+    <div class="kpi-sub">22,370 gestionados</div>
+    <span class="kpi-tag">Sin intervención humana</span>
+  </div>
+  <div class="kpi-card purple">
+    <div class="kpi-label">Tasa de Contacto</div>
+    <div class="kpi-value purple">47.5%</div>
+    <div class="kpi-sub">10,618 / 22,370 gestionados · Pico 61%</div>
+    <span class="kpi-tag">Pico: 61%</span>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">Primarias Generadas</div>
+    <div class="kpi-value orange">4,273</div>
+    <div class="kpi-sub">+1,096% sobre objetivo (357)</div>
+    <span class="kpi-tag">+1,096% vs meta</span>
+  </div>
+  <div class="kpi-card gold">
+    <div class="kpi-label">Ventas Cerradas</div>
+    <div class="kpi-value gold">367</div>
+    <div class="kpi-sub">Obj: 357 · +2.8% sobre meta</div>
+    <span class="kpi-tag">✓ Meta superada</span>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">Alumnos Inscritos</div>
+    <div class="kpi-value green">314</div>
+    <div class="kpi-sub">85.6% conversión venta→alumno</div>
+    <span class="kpi-tag">Alta conversión</span>
+  </div>
+  <div class="kpi-card teal">
+    <div class="kpi-label">Contactabilidad Primarias</div>
+    <div class="kpi-value teal">77%</div>
+    <div class="kpi-sub">3,295 de 4,273 contactadas</div>
+    <span class="kpi-tag">Seguimiento efectivo</span>
+  </div>
+  <div class="kpi-card purple">
+    <div class="kpi-label">Contactabilidad Refs.</div>
+    <div class="kpi-value purple">87%</div>
+    <div class="kpi-sub">775 de 887 referencias</div>
+    <span class="kpi-tag">+148% vs meta refs.</span>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">Conversión Global</div>
+    <div class="kpi-value orange">1.5%</div>
+    <div class="kpi-sub">Lead → Venta</div>
+    <span class="kpi-tag">Eficiencia total</span>
+  </div>
+  <div class="kpi-card gold">
+    <div class="kpi-label">Costo Operativo Q1</div>
+    <div class="kpi-value gold">$958</div>
+    <div class="kpi-sub">Ene $192 · Feb $323 · Mar $423</div>
+    <span class="kpi-tag warn">Costo por venta: ~$2.6</span>
+  </div>
+</div>
+
+<!-- ══ SECCIÓN 2: FUNNEL + CONTACTABILIDAD ══ -->
+<p class="section-title">Funnel de Conversión & Contactabilidad</p>
+<div class="two-col">
+  <div class="funnel-wrap">
+    <h3>Funnel Total Q1 2026</h3>
+    <div class="funnel-row">
+      <div class="funnel-label">Leads</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%;background:linear-gradient(90deg,#ff6d00,#ff9800);">23,909</div></div>
+      <div class="funnel-pct">100%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Gestionados</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:93.6%;background:linear-gradient(90deg,#ff9800,#ffc107);">22,370</div></div>
+      <div class="funnel-pct">93.6%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Contactados</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:44.4%;background:linear-gradient(90deg,#00bcd4,#26c6da);">10,618</div></div>
+      <div class="funnel-pct">44.4%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Interesados</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:30.5%;background:linear-gradient(90deg,#7c4dff,#9c6fff);">3,235</div></div>
+      <div class="funnel-pct">30.5%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Primarias</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:40.3%;background:linear-gradient(90deg,#00e676,#69f0ae);">4,273</div></div>
+      <div class="funnel-pct">40.3%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Referencias</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:8.4%;background:linear-gradient(90deg,#40c4ff,#80d8ff);">887</div></div>
+      <div class="funnel-pct">8.4%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Ventas</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:3.5%;background:linear-gradient(90deg,#ffd700,#ffe57f);">367</div></div>
+      <div class="funnel-pct">1.5%</div>
+    </div>
+    <div class="funnel-row">
+      <div class="funnel-label">Alumnos</div>
+      <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:3%;background:linear-gradient(90deg,#00e676,#b9f6ca);">314</div></div>
+      <div class="funnel-pct">1.3%</div>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <h3>Tasa de Contacto Diaria — Enero 2026 (%)</h3>
+    <div class="chart-wrap"><canvas id="contactChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ══ SECCIÓN 3: CONTACTABILIDAD PRIMARIAS Y REFERENCIAS ══ -->
+<p class="section-title">Calidad de Contacto — Primarias & Referencias</p>
+<div class="two-col">
+  <div class="chart-card">
+    <h3>Funnel Primarias — Contactabilidad 77%</h3>
+    <div class="chart-wrap"><canvas id="primariasChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>Funnel Referencias — Contactabilidad 87%</h3>
+    <div class="chart-wrap"><canvas id="referenciasChart"></canvas></div>
+  </div>
+</div>
+
+<div class="three-col" style="margin-top:20px;">
+  <div class="kpi-card teal">
+    <div class="kpi-label">Primarias con Contacto</div>
+    <div class="kpi-value teal">3,295</div>
+    <div class="kpi-sub">de 4,273 primarias totales</div>
+    <span class="kpi-tag">77% contactabilidad</span>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">Utilidad Positiva (Prim.)</div>
+    <div class="kpi-value green">~45%</div>
+    <div class="kpi-sub">Contactos con resultado útil</div>
+    <span class="kpi-tag">Calidad de conversación</span>
+  </div>
+  <div class="kpi-card purple">
+    <div class="kpi-label">Referencias Útiles Positivas</div>
+    <div class="kpi-value purple">666</div>
+    <div class="kpi-sub">de 775 contactadas (86%)</div>
+    <span class="kpi-tag">Alta calidad de referidos</span>
+  </div>
+</div>
+
+<!-- ══ SECCIÓN 6: COSTOS OPERATIVOS ══ -->
+<p class="section-title">Análisis de Costos Operativos — Eficiencia de Inversión</p>
+<div class="table-card">
+    <h3>Principales Componentes de Costo Q1 2026</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Componente</th>
+          <th>Enero</th>
+          <th>Febrero</th>
+          <th>Marzo</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>ElevenLabs TTS (voz)</td><td>$21</td><td>$106</td><td>$210</td><td><span class="pill mid">Voz IA</span></td></tr>
+        <tr><td>Play TTS</td><td>$148</td><td>$182</td><td>$166</td><td><span class="pill mid">Voz IA</span></td></tr>
+        <tr><td>GPT-4o Mini</td><td>$12</td><td>$23</td><td>$30</td><td><span class="pill high">LLM</span></td></tr>
+        <tr><td>Claude 3.7 Sonnet</td><td>—</td><td>$4</td><td>$56</td><td><span class="pill high">LLM</span></td></tr>
+        <tr><td>Knowledge Base</td><td>$7</td><td>$9</td><td>$10</td><td><span class="pill high">Base conocimiento</span></td></tr>
+        <tr><td>GPT-4o</td><td>$4</td><td>$1</td><td>$2</td><td><span class="pill high">LLM</span></td></tr>
+        <tr style="font-weight:700;"><td>TOTAL</td><td>$192</td><td>$323</td><td>$423</td><td><span class="pill high">~$2.6/venta</span></td></tr>
+      </tbody>
+    </table>
+</div>
+
+<div class="three-col" style="margin-top:20px;">
+  <div class="kpi-card green">
+    <div class="kpi-label">Costo Total Q1</div>
+    <div class="kpi-value green">$958</div>
+    <div class="kpi-sub">Enero + Febrero + Marzo</div>
+    <span class="kpi-tag">Inversión mínima</span>
+  </div>
+  <div class="kpi-card teal">
+    <div class="kpi-label">Costo por Venta</div>
+    <div class="kpi-value teal">~$2.6</div>
+    <div class="kpi-sub">$958 / 367 ventas</div>
+    <span class="kpi-tag">ROI excepcional</span>
+  </div>
+  <div class="kpi-card gold">
+    <div class="kpi-label">Costo por Lead ecosistema Voicebot</div>
+    <div class="kpi-value gold">$0.04</div>
+    <div class="kpi-sub">$958 / 22,370 leads</div>
+    <span class="kpi-tag">Escala sin costo lineal</span>
+  </div>
+</div>
+
+<!-- ══ SECCIÓN 7: COMPARATIVO HISTÓRICO ══ -->
+<p class="section-title">Evolución Histórica — Noviembre 2025 vs Q1 2026</p>
+<div class="two-col" style="margin-top:20px;">
+  <div class="table-card">
+    <h3>Comparativo de Rendimiento por Período</h3>
+    <table>
+      <thead>
+        <tr><th>Indicador</th><th>Nov 2025</th><th>Q1 2026</th><th>Variación</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Leads Totales</td><td>9,206</td><td>23,909</td><td><span class="trend-up">▲ +159%</span></td></tr>
+        <tr><td>Gestionados Bot</td><td>8,952 (97%)</td><td>22,370 (93.6%)</td><td><span class="trend-up">▲ +150%</span></td></tr>
+        <tr><td>Tasa Contacto</td><td>60.7%</td><td>47.5%</td><td><span class="trend-down">▼ Mayor volumen</span></td></tr>
+        <tr><td>Primarias</td><td>2,167</td><td>4,273</td><td><span class="trend-up">▲ +97%</span></td></tr>
+        <tr><td>Ventas</td><td>121</td><td>367</td><td><span class="trend-up">▲ +203%</span></td></tr>
+        <tr><td>Alumnos</td><td>140</td><td>314</td><td><span class="trend-up">▲ +124%</span></td></tr>
+        <tr><td>Conversión</td><td>1.3%</td><td>1.5%</td><td><span class="trend-up">▲ +0.2pp</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-card">
+    <h3>Gestión Semanal Detallada — Enero 2026</h3>
+    <table>
+      <thead>
+        <tr><th>Indicador</th><th>Sem 1</th><th>Sem 2</th><th>Sem 3</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Leads Cargados</td><td>603</td><td>2,004</td><td>1,342</td><td><span class="pill high">Creciente</span></td></tr>
+        <tr><td>Gestionados Bot</td><td>593</td><td>1,989</td><td>1,284</td><td><span class="pill high">+98% cob.</span></td></tr>
+        <tr><td>Contactados</td><td>317</td><td>1,101</td><td>687</td><td><span class="pill mid">~55%</span></td></tr>
+        <tr><td>Primarias</td><td>119</td><td>504</td><td>345</td><td><span class="pill high">Sólido</span></td></tr>
+        <tr><td>WA Automatizados</td><td>589</td><td>1,961</td><td>1,270</td><td><span class="pill high">Escala</span></td></tr>
+        <tr><td>Mails Automatizados</td><td>586</td><td>1,948</td><td>1,270</td><td><span class="pill high">Omnicanal</span></td></tr>
+        <tr><td>Inbound Atendidos</td><td>62</td><td>200</td><td>127</td><td><span class="pill mid">Activo</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══ HIGHLIGHTS EJECUTIVOS ══ -->
+<div class="highlight-box">
+  <h3>🏆 Argumentos Clave para la Dirección</h3>
+  <ul>
+    <li>El VoiceBot gestionó el <strong>93.6% de 23,909 leads de forma autónoma</strong>, eliminando la primera capa de contacto humano por completo.</li>
+    <li>Se superó la meta de ventas del trimestre: <strong>367 ventas vs. objetivo de 357 (+2.8%)</strong>, con un costo operativo total de solo $958 USD.</li>
+    <li>El <strong>costo por venta es de ~$2.6 USD</strong>, una fracción del costo de un equipo comercial tradicional para el mismo volumen.</li>
+    <li>Las primarias generadas superaron el objetivo en <strong>+1,096%</strong> (4,273 vs meta de 357), demostrando la capacidad de generación de oportunidades a escala.</li>
+    <li>La contactabilidad de primarias alcanzó el <strong>77%</strong> y la de referencias el <strong>87%</strong>, con utilidad positiva en la mayoría de los contactos.</li>
+    <li>En comparación con noviembre 2025, las ventas crecieron <strong>+203%</strong> (121 → 367) manteniendo la misma tasa de conversión, lo que confirma que el modelo escala sin degradarse.</li>
+    <li>El sistema opera en <strong>3 canales simultáneos</strong> (llamadas, email, WhatsApp) con 18.2 + 12.2 + 2.3 interacciones automatizadas por lead, sin costo marginal adicional.</li>
+    <li>El modelo es <strong>replicable en cualquier institución educativa</strong> con configuración en semanas y ROI medible desde el primer mes de operación.</li>
+  </ul>
+</div>
+
+<hr class="divider"/>
+<footer>
+  VoiceBot GM · Utel Universidad · Período: 02/01/2026 – 31/03/2026 · Datos históricos: Nov 2025 · Reporte ejecutivo para presentación CTO
+</footer>
+
+<script>
+new Chart(document.getElementById('contactChart').getContext('2d'), {
+  type: 'line',
+  data: {
+    labels: ['02/01','03/01','04/01','05/01','06/01','07/01','08/01','09/01','10/01','11/01','12/01','13/01','14/01','15/01'],
+    datasets: [{ label: '% Contactados', data: [53,54,57,60,50,61,43,50,53,52,53,56,57,50], borderColor: '#00e676', backgroundColor: 'rgba(0,230,118,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#00e676', pointRadius: 4 }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { color: '#8b949e', font: { size: 10 } }, grid: { color: '#21262d' } }, y: { ticks: { color: '#8b949e', font: { size: 10 }, callback: v => v + '%' }, grid: { color: '#21262d' }, min: 30, max: 70 } } }
+});
+
+new Chart(document.getElementById('primariasChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: ['Con Contacto (77%)', 'Sin Contacto (23%)'], datasets: [{ data: [3295, 978], backgroundColor: ['#00e676', '#30363d'], borderColor: ['#00e676', '#30363d'], borderWidth: 2 }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#8b949e', font: { size: 11 } } } }, cutout: '65%' }
+});
+
+new Chart(document.getElementById('referenciasChart').getContext('2d'), {
+  type: 'doughnut',
+  data: { labels: ['Util Positivo (86%)', 'Util Negativo (7%)', 'Sin Contacto (14%)'], datasets: [{ data: [666, 56, 112], backgroundColor: ['#00e676', '#ff6d00', '#30363d'], borderColor: ['#00e676', '#ff6d00', '#30363d'], borderWidth: 2 }] },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#8b949e', font: { size: 11 } } } }, cutout: '65%' }
+});
+</script>
+</body>
+</html>
