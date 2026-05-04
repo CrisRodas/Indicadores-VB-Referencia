@@ -363,6 +363,8 @@ new Chart(document.getElementById('contactChart').getContext('2d'), {
       {
         label: '% Contacto Promedio',
         data: [53, 47, 40],
+        contactados: [4051, 3612, 2955],
+        gestionados: [7644, 7685, 7041],
         backgroundColor: ['rgba(0,230,118,0.7)', 'rgba(0,188,212,0.7)', 'rgba(124,77,255,0.7)'],
         borderColor: ['#00e676', '#00bcd4', '#7c4dff'],
         borderWidth: 2,
@@ -371,11 +373,12 @@ new Chart(document.getElementById('contactChart').getContext('2d'), {
       {
         label: '% Pico Máximo',
         data: [61, 59, 50],
+        contactados: [null, null, null],
+        gestionados: [null, null, null],
         backgroundColor: ['rgba(0,230,118,0.2)', 'rgba(0,188,212,0.2)', 'rgba(124,77,255,0.2)'],
         borderColor: ['#00e676', '#00bcd4', '#7c4dff'],
         borderWidth: 2,
-        borderRadius: 8,
-        borderDash: [5,5]
+        borderRadius: 8
       }
     ]
   },
@@ -383,7 +386,18 @@ new Chart(document.getElementById('contactChart').getContext('2d'), {
     responsive: true, maintainAspectRatio: false,
     plugins: {
       legend: { labels: { color: '#8b949e', font: { size: 11 } } },
-      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const lines = [` ${ctx.dataset.label}: ${ctx.parsed.y}%`];
+            const c = ctx.dataset.contactados && ctx.dataset.contactados[ctx.dataIndex];
+            const g = ctx.dataset.gestionados && ctx.dataset.gestionados[ctx.dataIndex];
+            if (c) lines.push(` Contactados: ${c.toLocaleString('es-MX')}`);
+            if (g) lines.push(` Gestionados: ${g.toLocaleString('es-MX')}`);
+            return lines;
+          }
+        }
+      }
     },
     scales: {
       x: { ticks: { color: '#8b949e' }, grid: { color: '#21262d' } },
